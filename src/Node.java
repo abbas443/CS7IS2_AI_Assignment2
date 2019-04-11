@@ -7,6 +7,23 @@ public class Node {
     int y;
     Node parent;
     int hash;
+    int level;
+    int g;
+    int h;
+    int f;
+
+    public Node(int[][] mat, Node parent, int x, int y, int level, int g, int h, int f) {
+        this.mat = mat;
+        this.x = x;
+        this.y = y;
+        this.parent = parent;
+        hash = Arrays.deepHashCode(mat);
+
+        this.level = level;
+        this.g = g;
+        this.f = f;
+        this.h = h;
+    }
 
     public Node(int[][] mat, Node parent, int x, int y) {
         this.mat = mat;
@@ -27,3 +44,4 @@ public class Node {
         return hash;
     }
 }
+
