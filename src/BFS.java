@@ -1,6 +1,7 @@
+
 import java.util.*;
 
-class BFS8PP
+class BFS
 {
     static int row[] = { 1, 0, -1, 0 };
     static int col[] = { 0, -1, 0, 1 };
@@ -47,8 +48,10 @@ class BFS8PP
             if(Arrays.deepEquals(top.mat, fin))
             {
                 printPath(top);
+                System.out.println("Nodes Expanded: " + visited.size());
                 break;
             }
+
             for (int i = 3; i >= 0; i--) {
                 if (isSafe(top.x + row[i], top.y + col[i])) {
                     int tempMatrix[][] = new int[3][3];
@@ -73,18 +76,11 @@ class BFS8PP
 
         boolean found = false;
         int x = 2, y = 2;
-        int init[][] = {
-                {1,2,3},
-                {0,4,5},
-                {7,8,6}};
-        int fin[][] = {
-                {1,0,3},
-                {4,2,5},
-                {7,8,6}};
+
 
         for(int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (init[i][j] == 0) {
+                if (State.init[i][j] == 0) {
                     x = i;
                     y = j;
                     found = true;
@@ -94,7 +90,18 @@ class BFS8PP
             if(found)
                 break;
         }
-        solve(init, x, y, fin);
+
+        long startTime = System.nanoTime();
+
+        solve(State.init, x, y, State.fin);
+
+        long endTime = System.nanoTime();
+
+        double durationInNano = (endTime - startTime);  //Total execution time in nano seconds
+        double durationInMilli = durationInNano/1000000;  //Total execution time in milli seconds
+
         System.out.println("Number of steps required: " + (counter-1));
+        System.out.println("Time Taken: " + durationInMilli + " ms");
+
     }
 }
