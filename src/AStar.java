@@ -1,19 +1,12 @@
+
 import java.util.*;
 
-class AS8PP
+class AStar
 {
     static int row[] = { 1, 0, -1, 0 };
     static int col[] = { 0, -1, 0, 1 };
     static int counter = 0;
     static int level = 0;
-    static int init[][] = {
-            {1,2,3},
-            {0,4,5},
-            {7,8,6}};
-    static int fin[][] = {
-            {1,2,3},
-            {4,5,6},
-            {7,8,0}};
 
     public static void printMatrix(int mat[][])
     {
@@ -44,7 +37,7 @@ class AS8PP
             for(int j = 0; j < 3; j++)
             {
                 if(currentNode.mat[i][j] != 0)
-                    if(currentNode.mat[i][j] != fin[i][j])
+                    if(currentNode.mat[i][j] != State.fin[i][j])
                         n++;
             }
         }
@@ -69,7 +62,11 @@ class AS8PP
 
         while(true)
         {
-            int min = list.get(0).f;
+            int min;
+
+            min = list.get(0).f;
+
+
             top = list.get(0);
 
             for(Node n : list)
@@ -84,12 +81,13 @@ class AS8PP
 
             if(Arrays.deepEquals(top.mat, fin))
             {
+
                 printPath(top);
+                System.out.println("Nodes Expanded: " + visited.size());
                 break;
             }
 
             ++level;
-
             list = new ArrayList<>();
 
             for (int i = 3; i >= 0; i--) {
@@ -113,7 +111,6 @@ class AS8PP
 
                 }
             }
-
         }
     }
     public static void main(String[] args) {
@@ -123,7 +120,7 @@ class AS8PP
 
         for(int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (init[i][j] == 0) {
+                if (State.init[i][j] == 0) {
                     x = i;
                     y = j;
                     found = true;
@@ -133,7 +130,17 @@ class AS8PP
             if(found)
                 break;
         }
-        solve(init, x, y, fin);
+        long startTime = System.nanoTime();
+
+        solve(State.init, x, y, State.fin);
+
+        long endTime = System.nanoTime();
+
+        double durationInNano = (endTime - startTime);  //Total execution time in nano seconds
+
+        double durationInMilli = durationInNano/1000000;  //Total execution time in milli seconds
+
         System.out.println("Number of steps required: " + (counter-1));
+        System.out.println("Time Taken: " + durationInMilli + " ms");
     }
 }
