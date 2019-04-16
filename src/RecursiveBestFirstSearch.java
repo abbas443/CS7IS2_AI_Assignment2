@@ -1,57 +1,51 @@
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecursiveBestFirstSearch {
 
-    private int maxSteps = 0;
+    int maxSteps = 0;
 
     private static final int size = 3;
     private static final Double INFINITY = Double.POSITIVE_INFINITY;
 
-    private int[] row = { 1, 0, -1, 0 };
-    private int[] col = { 0, -1, 0, 1 };
+    int[] row = { 1, 0, -1, 0 };
+    int[] column = { 0, -1, 0, 1 };
 
-    // Goal state
-    private char[][] goal = {
-            {'1','2','3'},
+    char[][] goalState = { {'1','2','3'},
             {'4','5','6'},
             {'7','8','0'} };
 
-
     public void search(char[][] initPuzzle) {
 
-        int[] coords = getBlankBlockPos(initPuzzle);
+        int[] coordinates = getBlankBoardPosn(initPuzzle);
 
-        RBFSNode p = new RBFSNode(initPuzzle, coords[0], coords[1], coords[0], coords[1], null);
+        RBFSNode p = new RBFSNode(initPuzzle, coordinates[0], coordinates[1], coordinates[0], coordinates[1], null);
         RBFSNode n = p;
 
-        SearchSoln sr = rbfs(p, n, (double) p.cost, INFINITY);
+        RBFSResult sr = rbfs(p, n, (double) p.cost, INFINITY);
 
         printPath(sr.getSolution());
 
-        if (sr.getOutcome() == SearchSoln.Result.SOLUTION_FOUND)
+        if (sr.getOutcome() == RBFSResult.Result.SOLUTION_FOUND)
             System.out.println("Solution Found");
         else
-            System.out.println("Some Failure occured");
+            System.out.println("RBFS failed");
 
     }
 
-    private SearchSoln rbfs(RBFSNode p, RBFSNode c, Double fNode, Double fLimit) {
+    private RBFSResult rbfs(RBFSNode p, RBFSNode c, Double fNode, Double fLimit) {
 
         maxSteps++;
 
-        if (c.cost == 0) return new SearchSoln(c, fLimit);
+        if (c.cost == 0) return new RBFSResult(c, fLimit);
 
         List<RBFSNode> successors = expandNode(c);
 
         double[] f = new double[successors.size()];
 
-        if (successors.size() == 0) return new SearchSoln(null, INFINITY);
+        if (successors.size() == 0) return new RBFSResult(null, INFINITY);
 
         for (int s = 0; s < successors.size(); s++) {
-
             if (successors.get(s).cost < fNode)
                 f[s] = Math.min(successors.get(s).cost, fNode);
             else
@@ -60,20 +54,20 @@ public class RecursiveBestFirstSearch {
 
         while (maxSteps < 1000) {
 
-            int bestIndex = fetchBestFPos(f);
+            int bestIndex = getBestFValueIndex(f);
             if (f[bestIndex] > fLimit)
-                return new SearchSoln(null, f[bestIndex]);
+                return new RBFSResult(null, f[bestIndex]);
 
-            int altIndex = fetchBestFPos(f, bestIndex);
-            SearchSoln sr = rbfs(p, successors.get(bestIndex), f[bestIndex], Math.min(fLimit, f[altIndex]));
+            int altIndex = getNextBestFValueIndex(f, bestIndex);
+            RBFSResult sr = rbfs(p, successors.get(bestIndex), f[bestIndex], Math.min(fLimit, f[altIndex]));
             f[bestIndex] = sr.getFCostLimit();
 
-            if (sr.getOutcome() == SearchSoln.Result.SOLUTION_FOUND) {
+            if (sr.getOutcome() == RBFSResult.Result.SOLUTION_FOUND) {
                 return sr;
             }
         }
 
-        return new SearchSoln(null, INFINITY);
+        return new RBFSResult(null, INFINITY);
     }
 
     private int heuristic(char[][] initPuzzle, char[][] goal) {
@@ -94,13 +88,13 @@ public class RecursiveBestFirstSearch {
         int n = puzzle.length;
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++)
-                if (puzzle[i][j] != '0' && puzzle[x][y] == goal[i][j])
+                if (puzzle[i][j] != '0' && puzzle[x][y] == goalState[i][j])
                     return Math.abs(x - i) + Math.abs(y - j);
 
         return 1;
     }
 
-    private int[] getBlankBlockPos(char[][] initPuzzle) {
+    private int[] getBlankBoardPosn(char[][] initPuzzle) {
         int[] coordinates = {0,0};
         for(int i = 0; i < 3; i++)
             for(int j = 0; j < 3; j++)
@@ -112,14 +106,12 @@ public class RecursiveBestFirstSearch {
         return coordinates;
     }
 
-
     private void printPath(RBFSNode root) {
         if (root == null) { return; }
         printPath(root.parent);
         printPuzzle(root.puzzle);
         System.out.println();
     }
-
 
     private void printPuzzle(char[][] Puzzle) {
         for (int i = 0; i < Puzzle.length; i++) {
@@ -138,30 +130,30 @@ public class RecursiveBestFirstSearch {
         List<RBFSNode> nl = new ArrayList<RBFSNode>();
 
         for (int i = 0; i < 4; i++)
-            if (isSafe(n.x + row[i], n.y + col[i])) {
+            if (isSafe(n.x + row[i], n.y + column[i])) {
                 switch (i) {
 
                     case 0:
-                        n.down = new RBFSNode(n.puzzle, n.x, n.y, n.x + row[i], n.y + col[i], n);
-                        n.down.cost = heuristic(n.down.puzzle, goal);
+                        n.down = new RBFSNode(n.puzzle, n.x, n.y, n.x + row[i], n.y + column[i], n);
+                        n.down.cost = heuristic(n.down.puzzle, goalState);
                         nl.add(n.down);
                         break;
 
                     case 1:
-                        n.left = new RBFSNode(n.puzzle, n.x, n.y, n.x + row[i], n.y + col[i], n);
-                        n.left.cost = heuristic(n.left.puzzle, goal);
+                        n.left = new RBFSNode(n.puzzle, n.x, n.y, n.x + row[i], n.y + column[i], n);
+                        n.left.cost = heuristic(n.left.puzzle, goalState);
                         nl.add(n.left);
                         break;
 
                     case 2:
-                        n.top = new RBFSNode(n.puzzle, n.x, n.y, n.x + row[i], n.y + col[i], n);
-                        n.top.cost = heuristic(n.top.puzzle, goal);
+                        n.top = new RBFSNode(n.puzzle, n.x, n.y, n.x + row[i], n.y + column[i], n);
+                        n.top.cost = heuristic(n.top.puzzle, goalState);
                         nl.add(n.top);
                         break;
 
                     case 3:
-                        n.right = new RBFSNode(n.puzzle, n.x, n.y, n.x + row[i], n.y + col[i], n);
-                        n.right.cost = heuristic(n.right.puzzle, goal);
+                        n.right = new RBFSNode(n.puzzle, n.x, n.y, n.x + row[i], n.y + column[i], n);
+                        n.right.cost = heuristic(n.right.puzzle, goalState);
                         nl.add(n.right);
                         break;
                 }
@@ -170,53 +162,54 @@ public class RecursiveBestFirstSearch {
         return nl;
     }
 
-    private int fetchBestFPos(double[] f) {
-        int posn = 0;
-        Double min = INFINITY;
+    private int getBestFValueIndex(double[] f) {
+        int lidx = 0;
+        Double lowestSoFar = INFINITY;
 
         for (int i = 0; i < f.length; i++) {
-            if (f[i] < min) {
-                min = f[i];
-                posn = i;
+            if (f[i] < lowestSoFar) {
+                lowestSoFar = f[i];
+                lidx = i;
             }
         }
 
-        return posn;
+        return lidx;
     }
 
-    private int fetchBestFPos(double[] f, int bestPos) {
-        int posn = bestPos;
-        Double min = INFINITY;
+    private int getNextBestFValueIndex(double[] f, int bestIndex) {
+        int lidx = bestIndex;
+        Double lowestSoFar = INFINITY;
 
         for (int i = 0; i < f.length; i++) {
-            if (i != bestPos && f[i] < min) {
-                min = f[i];
-                posn = i;
+            if (i != bestIndex && f[i] < lowestSoFar) {
+                lowestSoFar = f[i];
+                lidx = i;
             }
         }
 
-        return posn;
+        return lidx;
     }
 }
 
-
-class SearchSoln {
+class RBFSResult {
     public enum Result {
         FAILURE, SOLUTION_FOUND
     };
 
     private RBFSNode solution;
-    private Result outcome;
-    private final Double fValue;
 
-    public SearchSoln(RBFSNode solution, Double fCostLimit) {
+    private Result outcome;
+
+    private final Double fCostLimit;
+
+    public RBFSResult(RBFSNode solution, Double fCostLimit) {
         if (null == solution) {
             this.outcome = Result.FAILURE;
         } else {
             this.outcome = Result.SOLUTION_FOUND;
             this.solution = solution;
         }
-        this.fValue = fCostLimit;
+        this.fCostLimit = fCostLimit;
     }
 
     public Result getOutcome() {
@@ -228,16 +221,17 @@ class SearchSoln {
     }
 
     public Double getFCostLimit() {
-        return fValue;
+        return fCostLimit;
     }
 
 
     public static void main(String[] args) {
 
         RecursiveBestFirstSearch rbfs = new RecursiveBestFirstSearch();
-        char[][] puzzle = { {'6','4','7'},
-                {'8','5','0'},
-                {'3','2','1'} };
+
+        char[][] puzzle = { {6, 4, 7},
+                {8, 5, 0},
+                {3, 2, 1} };
 
         rbfs.search(puzzle);
     }
