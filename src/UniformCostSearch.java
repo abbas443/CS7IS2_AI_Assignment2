@@ -10,7 +10,7 @@ import static java.lang.System.exit;
 
 public class UniformCostSearch {
 
-    public static void main(String[] args) {new Main();}
+    public static void main(String[] args) {new UniformCostSearch().Main();}
 
     private static final int PUZZLE_SIZE = 3; // 8 puzzle has side length of 3. Can be changed for larger puzzles.
     private static final int ERROR = -1;  // impossible layout
@@ -61,7 +61,7 @@ public class UniformCostSearch {
     private static int nodesExpanded = 0;
     private static int maxQueueSize = 1;
 
-    Main() {
+    public void Main() {
         System.out.println("+=================================+");
         System.out.println("|         8-Puzzel Solver         |");
         System.out.println("|            David Yu             |");

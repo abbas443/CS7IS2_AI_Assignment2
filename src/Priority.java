@@ -12,11 +12,11 @@ import java.util.Arrays;
  */
 public class Priority {
    static int[][] preState;//keeps the previous state
-    static Node neighbors_nodeArray[];
+    static Node2 neighbors_nodeArray[];
 
     //takes an node array, sort nodes based on distance of fn
     //and return lowest fn node
-    public static Node sort(Node[] nodeArray) {
+    public static Node2 sort(Node2[] nodeArray) {
         
         if(preState!=null){//parent exists
             nodeArray = getParentRemovedNodeArray(nodeArray, preState);//remove parent
@@ -26,7 +26,7 @@ public class Priority {
         for (int i = 0; i < nodeArray.length; i++) {
             for (int j = nodeArray.length - 1; j > i; j--) {
                 if (nodeArray[j].fn < nodeArray[j - 1].fn) {
-                    Node temp = nodeArray[j];
+                    Node2 temp = nodeArray[j];
                     nodeArray[j] = nodeArray[j - 1];
                     nodeArray[j - 1] = temp;
                 }
@@ -38,8 +38,8 @@ public class Priority {
 
     //takes node array and prestate 
     //remove the neighbor which same as prestate and return parent removed node array
-    public static Node[] getParentRemovedNodeArray(Node []nodeArray, int[][] preState) {
-        Node[] parentRemovedNodeArray = new Node[nodeArray.length - 1];
+    public static Node2[] getParentRemovedNodeArray(Node2 []nodeArray, int[][] preState) {
+        Node2[] parentRemovedNodeArray = new Node2[nodeArray.length - 1];
         int j = 0;
         for (int i = 0; i < nodeArray.length; i++) {
             if (Arrays.deepEquals(nodeArray[i].state, preState)) {
@@ -54,12 +54,12 @@ public class Priority {
 }
 
 //Node class
-class Node {
+class Node2 {
 
     int fn;//fn value
     int[][] state;//states
     int [][] parent;
-    public Node(int fn, int[][] state, int[][]parent) {
+    public Node2(int fn, int[][] state, int[][]parent) {
         this.fn = fn;
         this.state = state;
         this.parent = parent;

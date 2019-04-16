@@ -1,8 +1,9 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
-public class Puzzle {
+public class BranchAndBound {
 
     public int dimension = 3;
 
@@ -36,7 +37,7 @@ public class Puzzle {
         return (x >= 0 && x < dimension && y >= 0 && y < dimension);
     }
 
-    public void printPath(Node root) {
+    public void printPath(Node1 root) {
         if (root == null) {
             return;
         }
@@ -70,13 +71,13 @@ public class Puzzle {
     }
 
     public void solve(int[][] initial, int[][] goal, int x, int y) {
-        PriorityQueue<Node> pq = new PriorityQueue<Node>(1000, (a, b) -> (a.cost + a.level) - (b.cost + b.level));
-        Node root = new Node(initial, x, y, x, y, 0, null);
+        PriorityQueue<Node1> pq = new PriorityQueue<>(1000, Comparator.comparingInt(a -> (a.cost + a.level)));
+        Node1 root = new Node1(initial, x, y, x, y, 0, null);
         root.cost = calculateCost(initial, goal);
         pq.add(root);
 
         while (!pq.isEmpty()) {
-            Node min = pq.poll();
+            Node1 min = pq.poll();
             if (min.cost == 0) {
                 printPath(min);
                 return;
@@ -84,7 +85,7 @@ public class Puzzle {
 
             for (int i = 0; i < 4; i++) {
                 if (isSafe(min.x + row[i], min.y + col[i])) {
-                    Node child = new Node(min.matrix, min.x, min.y, min.x + row[i], min.y + col[i], min.level + 1, min);
+                    Node1 child = new Node1(min.matrix, min.x, min.y, min.x + row[i], min.y + col[i], min.level + 1, min);
                     child.cost = calculateCost(child.matrix, goal);
                     pq.add(child);
                 }
@@ -93,13 +94,16 @@ public class Puzzle {
     }
 
     public static void main(String[] args) {
-        int[][] initial = { {1, 8, 2}, {0, 4, 3}, {7, 6, 5} };
-        int[][] goal    = { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} };
+//        int[][] initial = { {1, 8, 2}, {0, 4, 3}, {7, 6, 5} };
+//        int[][] goal    = { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} };
+//
+        int[][] initial = State.init;
+        int[][] goal = State.fin;
 
         // White tile coordinate
         int x = 1, y = 0;
 
-        Puzzle puzzle = new Puzzle();
+        BranchAndBound puzzle = new BranchAndBound();
         if (puzzle.isSolvable(initial)) {
             puzzle.solve(initial, goal, x, y);
         }

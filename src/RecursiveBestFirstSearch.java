@@ -14,9 +14,10 @@ public class RecursiveBestFirstSearch {
     private int[] col = { 0, -1, 0, 1 };
 
     // Goal state
-    private char[][] goal = { {'0','1','2'},
-                      {'3','4','5'},
-                      {'6','7','8'} };
+    private char[][] goal = {
+            {'1','2','3'},
+            {'4','5','6'},
+            {'7','8','0'} };
 
 
     public void search(char[][] initPuzzle) {

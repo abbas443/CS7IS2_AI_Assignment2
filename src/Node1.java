@@ -1,6 +1,6 @@
 public class Node1 {
 
-    public Node parent;
+    public Node1 parent;
     public int[][] matrix;
 
     // Blank tile cordinates
@@ -12,7 +12,7 @@ public class Node1 {
     // The number of moves so far
     public int level;
 
-    public Node(int[][] matrix, int x, int y, int newX, int newY, int level, Node parent) {
+    public Node1(int[][] matrix, int x, int y, int newX, int newY, int level, Node1 parent) {
         this.parent = parent;
         this.matrix = new int[matrix.length][];
         for (int i = 0; i < matrix.length; i++) {
