@@ -11,9 +11,9 @@ public class RecursiveBestFirstSearch {
     int[] row = { 1, 0, -1, 0 };
     int[] column = { 0, -1, 0, 1 };
 
-    char[][] goalState = { {'1','2','3'},
-            {'4','5','6'},
-            {'7','8','0'} };
+    char[][] goalState = { {'0','1','2'},
+            {'3','4','5'},
+            {'6','7','8'} };
 
     public void search(char[][] initPuzzle) {
 
@@ -229,9 +229,7 @@ class RBFSResult {
 
         RecursiveBestFirstSearch rbfs = new RecursiveBestFirstSearch();
 
-        char[][] puzzle = { {6, 4, 7},
-                {8, 5, 0},
-                {3, 2, 1} };
+        char[][] puzzle = { {'2','5','3'}, {'1','6','0'}, {'7','8','4'}  };
 
         rbfs.search(puzzle);
     }
